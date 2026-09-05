@@ -1,1 +1,21 @@
-# ignore
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+venv/
+env/
+.venv/
+cache/
+pandacache/
+*.ptag
+*.tfm
+*.log
+*.out
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
