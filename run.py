@@ -17,7 +17,11 @@ if __name__ == '__main__':
 
     base.world = world
     base.camera_controller = CameraController(focus=world.center)
-    base.player = Player(world)
-    base.start_menu = StartWindow()
+
+    def start_game():
+        base.player = Player(base.world)
+        base.start_menu.hide()
+
+    base.start_menu = StartWindow(on_play=start_game)
 
     base.run()
