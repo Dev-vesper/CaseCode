@@ -26,10 +26,6 @@ def make_button(text, parent, pos, command=None, extra_args=(), style='neutral',
     )
 
 
-def _in_superellipse(x, y, exponent):
-    return abs(x) ** exponent + abs(y) ** exponent <= 1.0
-
-
 def _in_icon(icon, x, y):
     if icon == 'hamburger':
         return (abs(x / 0.52) ** 8 + abs((y + 0.44) / 0.11) ** 8 <= 1.0
@@ -49,23 +45,19 @@ def _in_icon(icon, x, y):
 _SHAPE_CACHE = {}
 
 
-def _shape_map(icon, exponent, size):
-    key = (icon, exponent, size)
+def superellipse_round(size, radius, exponent, icon=None):
+    # superellipse corner rounding: |u/r|^n + |v/r|^n <= 1 inside each corner
+    key = (icon, radius, exponent, size)
     if key in _SHAPE_CACHE:
         return _SHAPE_CACHE[key]
     half = size / 2.0
-    xpos, xpow = [], []
+    xpos, ypos = [], []
     for px in range(size):
         for sx in (0.25, 0.75):
-            x = (px + sx - half) / half
-            xpos.append(x)
-            xpow.append(abs(x) ** exponent)
-    ypos, ypow = [], []
+            xpos.append((px + sx - half) / half)
     for py in range(size):
         for sy in (0.25, 0.75):
-            y = 1.0 - 2.0 * (py + sy) / size
-            ypos.append(y)
-            ypow.append(abs(y) ** exponent)
+            ypos.append(1.0 - 2.0 * (py + sy) / size)
     maps = []
     for py in range(size):
         for px in range(size):
@@ -75,7 +67,16 @@ def _shape_map(icon, exponent, size):
             row = py * 2
             for iy in (0, 1):
                 for ix in (0, 1):
-                    if xpow[col + ix] + ypow[row + iy] <= 1.0:
+                    x = px + 0.25 + 0.5 * ix
+                    y = py + 0.25 + 0.5 * iy
+                    dx = min(x, size - x)
+                    dy = min(y, size - y)
+                    if dx >= radius or dy >= radius:
+                        inside = True
+                    else:
+                        inside = ((1.0 - dx / radius) ** exponent
+                                  + (1.0 - dy / radius) ** exponent <= 1.0)
+                    if inside:
                         coverage += 0.25
                         if icon and _in_icon(icon, xpos[col + ix], ypos[row + iy]):
                             icon_hits += 0.25
@@ -91,10 +92,11 @@ def _round_texture(color, icon, lighten):
     key = (color, icon, lighten)
     if key in _TEXTURE_CACHE:
         return _TEXTURE_CACHE[key]
-    exponent = 4.0
-    opacity = 0.7
     size = 96
-    maps = _shape_map(icon, exponent, size)
+    radius = size * 0.30
+    exponent = 5.0
+    opacity = 0.7
+    maps = superellipse_round(size, radius, exponent, icon)
     image = PNMImage(size, size, 4)
     base = [min(1.0, c + lighten * (1.0 - c)) for c in color]
     for py in range(size):
