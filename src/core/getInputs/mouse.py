@@ -1,7 +1,10 @@
 import builtins
 
+from panda3d.core import MouseButton
+
 _scroll = 0
 _bound = False
+_middle_last = None
 
 
 def init():
@@ -23,4 +26,29 @@ def scroll_delta():
     global _scroll
     delta = _scroll
     _scroll = 0
+    return delta
+
+
+def middle_down():
+    base = getattr(builtins, 'base', None)
+    if base is None or base.mouseWatcherNode is None:
+        return False
+    return base.mouseWatcherNode.isButtonDown(MouseButton.three())
+
+
+def middle_drag_delta():
+    global _middle_last
+    base = getattr(builtins, 'base', None)
+    if base is None or base.mouseWatcherNode is None:
+        return 0.0, 0.0
+    watcher = base.mouseWatcherNode
+    if not middle_down() or not watcher.hasMouse():
+        _middle_last = None
+        return 0.0, 0.0
+    x, y = watcher.getMouseX(), watcher.getMouseY()
+    if _middle_last is None:
+        _middle_last = (x, y)
+        return 0.0, 0.0
+    delta = (x - _middle_last[0], y - _middle_last[1])
+    _middle_last = (x, y)
     return delta
