@@ -69,6 +69,10 @@ class StartWindow:
         self._hover = [False, False, False]
         self._k = [0.0, 0.0, 0.0]
 
+        self._x = -0.348 * base.getAspectRatio()
+        self._item_x = self._x + 0.02
+        self._bar_x = self._x - 0.01
+
         self.overlay = OnscreenImage(image=_overlay_texture(), parent=base.render2d)
         self.overlay.setTransparency(TransparencyAttrib.MAlpha)
 
@@ -76,7 +80,7 @@ class StartWindow:
             parent=base.aspect2d,
             text='CASECODE',
             font=_font('bold'),
-            pos=(-0.62, 0.35),
+            pos=(self._x, 0.35),
             scale=0.105,
             fg=(0.93, 0.95, 0.98, 1),
             align=TextNode.ALeft,
@@ -85,7 +89,7 @@ class StartWindow:
             mayChange=True,
         )
 
-        cursor_x = -0.62 + self.title.textNode.getWidth() * 0.105 + 0.022
+        cursor_x = self._x + self.title.textNode.getWidth() * 0.105 + 0.022
         self.cursor = DirectFrame(
             parent=base.aspect2d,
             frameSize=(0, 0.05, 0, 0.095),
@@ -99,7 +103,7 @@ class StartWindow:
             parent=base.aspect2d,
             text='A GOD-VIEW PROGRAMMING PUZZLE',
             font=_font('regular'),
-            pos=(-0.62, 0.275),
+            pos=(self._x, 0.275),
             scale=0.026,
             fg=(0.42, 0.47, 0.56, 1),
             align=TextNode.ALeft,
@@ -110,7 +114,7 @@ class StartWindow:
             parent=base.aspect2d,
             frameSize=(-0.012, 0.012, -0.012, 0.012),
             frameColor=(_REC_RED[0], _REC_RED[1], _REC_RED[2], 1),
-            pos=(-0.608, 0, 0.74),
+            pos=(self._x + 0.012, 0, 0.74),
             relief=DGG.FLAT,
         )
         self.rec_dot.setTransparency(TransparencyAttrib.MAlpha)
@@ -118,7 +122,7 @@ class StartWindow:
             parent=base.aspect2d,
             text='REC',
             font=_font('bold'),
-            pos=(-0.575, 0.74),
+            pos=(self._x + 0.045, 0.74),
             scale=0.03,
             fg=(_REC_RED[0], _REC_RED[1], _REC_RED[2], 1),
             align=TextNode.ALeft,
@@ -129,7 +133,7 @@ class StartWindow:
             parent=base.aspect2d,
             text='v0.1.0',
             font=_font('regular'),
-            pos=(-0.62, -0.84),
+            pos=(self._x, -0.84),
             scale=0.026,
             fg=(0.42, 0.47, 0.56, 1),
             align=TextNode.ALeft,
@@ -147,7 +151,7 @@ class StartWindow:
                 parent=base.aspect2d,
                 frameSize=(0, 0.016, -0.012, 0.030),
                 frameColor=(_ACCENT[0], _ACCENT[1], _ACCENT[2], 1),
-                pos=(-0.63, 0, z),
+                pos=(self._bar_x, 0, z),
                 relief=DGG.FLAT,
             )
             bar.setTransparency(TransparencyAttrib.MAlpha)
@@ -155,7 +159,7 @@ class StartWindow:
 
             item = DirectButton(
                 parent=base.aspect2d,
-                pos=(-0.60, 0, z),
+                pos=(self._item_x, 0, z),
                 relief=DGG.FLAT,
                 frameSize=(0.0, 0.45, -0.045, 0.055),
                 frameColor=(1, 1, 1, 0),
@@ -170,7 +174,7 @@ class StartWindow:
                 parent=base.aspect2d,
                 text=label,
                 font=_font('regular'),
-                pos=(-0.60, z),
+                pos=(self._item_x, z),
                 scale=0.042,
                 fg=(1, 1, 1, 1),
                 align=TextNode.ALeft,
@@ -249,9 +253,9 @@ class StartWindow:
             self._labels[index].setColorScale(r, g, b, fade)
             self._bars[index].setColorScale(1, 1, 1, fade)
             self._bars[index].setSx(max(k, 0.001))
-            self._bars[index].setX(-0.63 + shift)
-            self._items[index].setX(-0.60 + shift)
-            self._labels[index].setX(-0.60 + shift)
+            self._bars[index].setX(self._bar_x + shift)
+            self._items[index].setX(self._item_x + shift)
+            self._labels[index].setX(self._item_x + shift)
         return task.cont
 
     def show(self):
