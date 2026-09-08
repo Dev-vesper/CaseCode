@@ -5,7 +5,7 @@ from panda3d.bullet import BulletBoxShape, BulletRigidBodyNode, BulletWorld
 from panda3d.core import ClockObject
 
 SCALE = 0.4
-DROP_HEIGHT = 2.0
+SPAWN_HEIGHT = 6.0
 
 
 class Player:
@@ -41,7 +41,7 @@ class Player:
         self.node = base.render.attachNewNode(self.body)
         spawn = world.blocks[0]
         self.node.setPos(spawn[0] + 0.5, spawn[1] + 0.5,
-                         spawn[2] + 1 + self.size.z / 2 + DROP_HEIGHT)
+                         world.bounds[5] + 1 + SPAWN_HEIGHT + self.size.z / 2)
         self.model.reparentTo(self.node)
         self.model.setPos(-center)
         self.physics.attach(self.body)
