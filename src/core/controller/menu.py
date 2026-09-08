@@ -1,6 +1,7 @@
 import builtins
 
 from src.core.controller.player import Player
+from src.core.controller.settings_menu import SettingsMenu
 from src.ui.buttons import make_round_button
 from src.ui.windows import SideMenu, StartWindow
 
@@ -11,9 +12,17 @@ class Menu:
         if base is None:
             raise RuntimeError('Menu requires a ShowBase instance to exist first.')
 
-        self.start_window = StartWindow(on_play=self.start_game)
+        self.start_window = StartWindow(on_play=self.start_game, on_settings=self.open_settings)
+        self.settings_menu = SettingsMenu(on_close=self.close_settings)
         self.side_menu = None
         self.hud_buttons = []
+
+    def open_settings(self):
+        self.start_window.hide()
+        self.settings_menu.open()
+
+    def close_settings(self):
+        self.start_window.show()
 
     def start_game(self):
         base.player = Player(base.world)
