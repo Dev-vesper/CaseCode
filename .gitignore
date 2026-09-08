@@ -19,3 +19,6 @@ pandacache/
 *.swo
 .DS_Store
 Thumbs.db
+
+# local agent guide
+pip_agent.md
