@@ -9,7 +9,7 @@ from src.core.getInputs import keyboard, mouse
 
 class CameraController:
     def __init__(self, focus=(0, 0, 0), distance=30, min_distance=6, max_distance=90,
-                 rotate_speed=2.2, pitch_speed=1.4, zoom_step=0.12):
+                 rotate_speed=2.2, pitch_speed=1.4, zoom_step=0.12, drag_speed=3.0):
         self.focus = focus
         self.distance = distance
         self.distance_target = distance
@@ -18,6 +18,7 @@ class CameraController:
         self.rotate_speed = rotate_speed
         self.pitch_speed = pitch_speed
         self.zoom_step = zoom_step
+        self.drag_speed = drag_speed
         self.azimuth = math.pi / 4
         self.elevation = 0.9
         self.min_elevation = 0.25
@@ -41,6 +42,12 @@ class CameraController:
             self.elevation = min(self.max_elevation, self.elevation + self.pitch_speed * dt)
         if keyboard.s_down():
             self.elevation = max(self.min_elevation, self.elevation - self.pitch_speed * dt)
+
+        drag_dx, drag_dy = mouse.middle_drag_delta()
+        if drag_dx or drag_dy:
+            self.azimuth += drag_dx * self.drag_speed
+            self.elevation = max(self.min_elevation,
+                                 min(self.max_elevation, self.elevation + drag_dy * self.drag_speed))
 
         notches = mouse.scroll_delta()
         if notches:
