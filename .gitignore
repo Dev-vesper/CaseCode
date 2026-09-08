@@ -22,3 +22,6 @@ Thumbs.db
 
 # local agent guide
 pip_agent.md
+
+# runtime user settings
+configs/game/settings.json
