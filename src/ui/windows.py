@@ -137,7 +137,7 @@ class SideMenu:
             self._task = builtins.base.taskMgr.add(self._update, 'side_menu_slide')
 
     def _update(self, task):
-        dt = ClockObject.getGlobalClock().getDt()
+        dt = min(ClockObject.getGlobalClock().getDt(), 0.05)
         current = self.panel.getX()
         moved = current + (self._target_x - current) * min(1.0, dt * 10)
         if abs(self._target_x - moved) < 0.001:
