@@ -4,6 +4,7 @@ import builtins
 
 from panda3d.core import ClockObject
 
+from configs.game import settings as game_settings
 from src.core.getInputs import keyboard, mouse
 
 
@@ -37,24 +38,28 @@ class CameraController:
 
     def update(self, task):
         dt = ClockObject.getGlobalClock().getDt()
+        speed = game_settings.get('camera_speed') / 5.0
 
         if keyboard.a_down():
-            self.azimuth_target -= self.rotate_speed * dt
+            self.azimuth_target -= self.rotate_speed * speed * dt
         if keyboard.d_down():
-            self.azimuth_target += self.rotate_speed * dt
+            self.azimuth_target += self.rotate_speed * speed * dt
         if keyboard.w_down():
-            self.elevation_target = min(self.max_elevation, self.elevation_target + self.pitch_speed * dt)
+            self.elevation_target = min(self.max_elevation, self.elevation_target + self.pitch_speed * speed * dt)
         if keyboard.s_down():
-            self.elevation_target = max(self.min_elevation, self.elevation_target - self.pitch_speed * dt)
+            self.elevation_target = max(self.min_elevation, self.elevation_target - self.pitch_speed * speed * dt)
 
         drag_dx, drag_dy = mouse.middle_drag_delta()
         if drag_dx or drag_dy:
+            if game_settings.get('invert_drag_y'):
+                drag_dy = -drag_dy
             self.look_yaw -= drag_dx * self.drag_speed
             self.look_pitch = max(-89.0, min(89.0, self.look_pitch + drag_dy * self.drag_speed))
 
         notches = mouse.scroll_delta()
         if notches:
-            self.distance_target *= (1 - self.zoom_step) ** notches
+            zoom_step = self.zoom_step * (game_settings.get('zoom_speed') / 5.0)
+            self.distance_target *= (1 - zoom_step) ** notches
             self.distance_target = max(self.min_distance, min(self.max_distance, self.distance_target))
 
         self.azimuth += (self.azimuth_target - self.azimuth) * min(1.0, dt * 8)
