@@ -3,10 +3,10 @@ import json
 from direct.showbase.ShowBase import ShowBase
 
 from src.core.controller.camera import CameraController
+from src.core.controller.menu import SideMenu, StartWindow
 from src.core.controller.player import Player
 from src.core.world.loader import WorldLoader
 from src.ui.buttons import make_round_button
-from src.ui.windows import SideMenu, StartWindow
 
 if __name__ == '__main__':
     base = ShowBase()
