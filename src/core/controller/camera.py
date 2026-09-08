@@ -22,7 +22,9 @@ class CameraController:
         self.look_yaw = 0.0
         self.look_pitch = 0.0
         self.azimuth = math.pi / 4
+        self.azimuth_target = math.pi / 4
         self.elevation = 0.9
+        self.elevation_target = 0.9
         self.min_elevation = 0.25
         self.max_elevation = 1.5
 
@@ -37,13 +39,13 @@ class CameraController:
         dt = ClockObject.getGlobalClock().getDt()
 
         if keyboard.a_down():
-            self.azimuth -= self.rotate_speed * dt
+            self.azimuth_target -= self.rotate_speed * dt
         if keyboard.d_down():
-            self.azimuth += self.rotate_speed * dt
+            self.azimuth_target += self.rotate_speed * dt
         if keyboard.w_down():
-            self.elevation = min(self.max_elevation, self.elevation + self.pitch_speed * dt)
+            self.elevation_target = min(self.max_elevation, self.elevation_target + self.pitch_speed * dt)
         if keyboard.s_down():
-            self.elevation = max(self.min_elevation, self.elevation - self.pitch_speed * dt)
+            self.elevation_target = max(self.min_elevation, self.elevation_target - self.pitch_speed * dt)
 
         drag_dx, drag_dy = mouse.middle_drag_delta()
         if drag_dx or drag_dy:
@@ -55,6 +57,8 @@ class CameraController:
             self.distance_target *= (1 - self.zoom_step) ** notches
             self.distance_target = max(self.min_distance, min(self.max_distance, self.distance_target))
 
+        self.azimuth += (self.azimuth_target - self.azimuth) * min(1.0, dt * 8)
+        self.elevation += (self.elevation_target - self.elevation) * min(1.0, dt * 8)
         self.distance += (self.distance_target - self.distance) * min(1.0, dt * 8)
 
         horizontal = self.distance * math.cos(self.elevation)
