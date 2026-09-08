@@ -23,11 +23,16 @@ if __name__ == '__main__':
         base.player = Player(base.world)
         base.start_menu.hide()
         base.side_menu = SideMenu()
+        margin = 0.07
+        spacing = 0.125
+        row_y = -(margin + 0.045)
         base.hud_buttons = [
-            make_round_button(base.a2dLeftCenter, (0.11, 0, 0.78),
+            make_round_button(base.a2dTopRight, (-(margin + 0.045), 0, row_y),
                               icon='hamburger', command=base.side_menu.toggle),
-            make_round_button(base.a2dLeftCenter, (0.11, 0, 0.56), icon='plus'),
-            make_round_button(base.a2dLeftCenter, (0.11, 0, 0.34), icon='grid'),
+            make_round_button(base.a2dTopRight, (-(margin + 0.045) - spacing, 0, row_y),
+                              icon='plus'),
+            make_round_button(base.a2dTopRight, (-(margin + 0.045) - 2 * spacing, 0, row_y),
+                              icon='grid'),
         ]
 
     base.start_menu = StartWindow(on_play=start_game)
