@@ -9,7 +9,7 @@ from src.core.getInputs import keyboard, mouse
 
 class CameraController:
     def __init__(self, focus=(0, 0, 0), distance=30, min_distance=6, max_distance=90,
-                 rotate_speed=2.2, pitch_speed=1.4, zoom_step=0.12, drag_speed=3.0):
+                 rotate_speed=2.2, pitch_speed=1.4, zoom_step=0.12, drag_speed=120.0):
         self.focus = focus
         self.distance = distance
         self.distance_target = distance
@@ -19,6 +19,8 @@ class CameraController:
         self.pitch_speed = pitch_speed
         self.zoom_step = zoom_step
         self.drag_speed = drag_speed
+        self.look_yaw = 0.0
+        self.look_pitch = 0.0
         self.azimuth = math.pi / 4
         self.elevation = 0.9
         self.min_elevation = 0.25
@@ -45,9 +47,8 @@ class CameraController:
 
         drag_dx, drag_dy = mouse.middle_drag_delta()
         if drag_dx or drag_dy:
-            self.azimuth += drag_dx * self.drag_speed
-            self.elevation = max(self.min_elevation,
-                                 min(self.max_elevation, self.elevation + drag_dy * self.drag_speed))
+            self.look_yaw -= drag_dx * self.drag_speed
+            self.look_pitch = max(-89.0, min(89.0, self.look_pitch + drag_dy * self.drag_speed))
 
         notches = mouse.scroll_delta()
         if notches:
@@ -64,4 +65,7 @@ class CameraController:
             self.focus[2] + self.distance * math.sin(self.elevation),
         )
         base.camera.lookAt(*self.focus)
+        hpr = base.camera.getHpr()
+        base.camera.setHpr(hpr.x + self.look_yaw,
+                           max(-89.0, min(89.0, hpr.y + self.look_pitch)), 0)
         return task.cont
