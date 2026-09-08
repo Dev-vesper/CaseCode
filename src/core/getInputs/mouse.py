@@ -33,7 +33,7 @@ def middle_down():
     base = getattr(builtins, 'base', None)
     if base is None or base.mouseWatcherNode is None:
         return False
-    return base.mouseWatcherNode.isButtonDown(MouseButton.three())
+    return base.mouseWatcherNode.isButtonDown(MouseButton.two())
 
 
 def middle_drag_delta():
