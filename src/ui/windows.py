@@ -197,10 +197,10 @@ class StartWindow:
     def _settings_placeholder(self):
         print('[StartWindow] Settings pressed — no settings window yet.')
 
-    def _enter(self, index):
+    def _enter(self, index, event=None):
         self._hover[index] = True
 
-    def _exit(self, index):
+    def _exit(self, index, event=None):
         self._hover[index] = False
 
     def _fade_amount(self, start):
