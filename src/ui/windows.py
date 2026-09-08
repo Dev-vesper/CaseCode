@@ -276,6 +276,8 @@ class StartWindow:
     def _start_task(self):
         if self._task is None:
             self._t = 0.0
+            self._hover = [False, False, False]
+            self._k = [0.0, 0.0, 0.0]
             self._task = builtins.base.taskMgr.add(self._update, 'start_menu_anim')
 
     def _stop_task(self):
@@ -285,14 +287,14 @@ class StartWindow:
 
 
 class SideMenu:
-    def __init__(self, on_resume=None, on_restart=None, on_exit=None):
+    def __init__(self, on_resume=None, on_restart=None, on_quit=None):
         base = getattr(builtins, 'base', None)
         if base is None:
             raise RuntimeError('SideMenu requires a ShowBase instance to exist first.')
 
         self._on_resume = on_resume or self.hide
         self._on_restart = on_restart or self._restart_placeholder
-        self._on_exit = on_exit or base.userExit
+        self._on_quit = on_quit or base.userExit
 
         self.width = 0.55
         self.hidden_x = -self.width - 0.01
@@ -317,7 +319,7 @@ class SideMenu:
         )
         self.resume_button = self._entry('Resume', 0, self._on_resume)
         self.restart_button = self._entry('Restart', 1, self._on_restart)
-        self.exit_button = self._entry('Exit', 2, self._on_exit)
+        self.quit_button = self._entry('Quit', 2, self._on_quit)
 
         self._target_x = self.hidden_x
         self._task = None
@@ -340,6 +342,16 @@ class SideMenu:
 
     def _restart_placeholder(self):
         print('[SideMenu] Restart pressed — no restart logic yet.')
+
+    def destroy(self):
+        if self._task is not None:
+            builtins.base.taskMgr.remove(self._task)
+            self._task = None
+        self.title.destroy()
+        self.resume_button.destroy()
+        self.restart_button.destroy()
+        self.quit_button.destroy()
+        self.panel.destroy()
 
     def toggle(self):
         if self._target_x < 0.0:

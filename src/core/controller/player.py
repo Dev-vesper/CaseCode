@@ -18,6 +18,7 @@ class Player:
         self.physics.setGravity((0, 0, -9.81))
 
         block_shape = BulletBoxShape((0.5, 0.5, 0.5))
+        self._blocks = []
         for x, y, z in world.blocks:
             block = BulletRigidBodyNode('block')
             block.addShape(block_shape)
@@ -25,6 +26,7 @@ class Player:
             np = base.render.attachNewNode(block)
             np.setPos(x + 0.5, y + 0.5, z + 0.5)
             self.physics.attach(np.node())
+            self._blocks.append(np)
 
         self.model = Actor('assets/models/ralph')
         self.model.setScale(SCALE)
@@ -52,3 +54,9 @@ class Player:
         dt = ClockObject.getGlobalClock().getDt()
         self.physics.doPhysics(dt, 10, 1.0 / 180.0)
         return task.cont
+
+    def destroy(self):
+        builtins.base.taskMgr.remove('player_physics')
+        for np in self._blocks:
+            np.removeNode()
+        self.node.removeNode()
