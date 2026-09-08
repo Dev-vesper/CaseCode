@@ -115,7 +115,7 @@ def _round_texture(color, icon, lighten):
 
 
 def make_round_button(parent, pos, icon=None, command=None, extra_args=(),
-                      color=(0.18, 0.22, 0.32), size=0.14):
+                      color=(0.18, 0.22, 0.32), size=0.09):
     normal = _round_texture(color, icon, 0.0)
     press = _round_texture(color, icon, 0.25)
     hover = _round_texture(color, icon, 0.12)
@@ -126,7 +126,7 @@ def make_round_button(parent, pos, icon=None, command=None, extra_args=(),
         frameSize=(-size / 2, size / 2, -size / 2, size / 2),
         frameColor=(1, 1, 1, 0),
         image=(normal, press, hover, press),
-        image_scale=(size, 1, size),
+        image_scale=(size / 2, 1, size / 2),
         state=DGG.NORMAL,
         command=command,
         extraArgs=list(extra_args),
